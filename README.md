@@ -11,15 +11,16 @@ Glaucoma is a leading cause of irreversible blindness. Early detection is critic
   * **Real-time Interface:** A Streamlit-based web app for instant diagnostic reporting.
 
 ## 📁 Repository Structure
-
 ```text
 ├── 01_model_training.py     # Data Preprocessing & Model Training
 ├── 02_model_evaluation.py   # Performance Metrics (ROC, Confusion Matrix)
 ├── 03_glaucoma_dashboard.py # Streamlit Web Interface (Main App)
 ├── Labels.csv               # Metadata & Clinical Labels
 ├── Images/                  # Dataset (700+ Retinal Fundus Images)
-└── results/                 # Folder for model artifacts and plots
-    └── model_performance_summary.png  # Generated ROC & Confusion Matrix
+├── results/                 # Folder for model artifacts and plots
+│   └── model_performance_summary.png  # Generated ROC & Confusion Matrix
+├── LICENSE                  # MIT License
+└── README.md                # Project Documentation & Guide
 ```
 
 ## 🚀 How to Run
@@ -71,6 +72,9 @@ The model is evaluated based on its ability to minimize **False Negatives**, whi
 ## 🧠 Explainable AI (Grad-CAM)
 
 We use **Gradient-weighted Class Activation Mapping (Grad-CAM)** to ensure clinical transparency. By visualizing the "Focus Map," doctors can verify if the AI is focusing on the optic nerve head rather than irrelevant background artifacts.
+
+## ⚖️ License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 -----
 
