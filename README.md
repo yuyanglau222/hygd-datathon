@@ -3,46 +3,81 @@
 An AI-powered diagnostic tool designed to assist ophthalmologists in identifying Glaucoma from retinal fundus images. This project utilizes **MobileNetV2** for feature extraction and **Grad-CAM** for explainable AI (XAI), highlighting the specific regions of the eye influencing the model's decision.
 
 ## 📊 Project Overview
+
 Glaucoma is a leading cause of irreversible blindness. Early detection is critical, but manual screening is time-consuming and prone to human error. This tool provides:
-* **High-Precision Classification:** Differentiates between Normal (GON-) and Glaucoma (GON+) scans.
-* **Visual Explanations:** Generates heatmaps to show where the AI is "looking" (e.g., the optic disc).
-* **Real-time Interface:** A Streamlit-based web app for instant diagnostic reporting.
+
+  * **High-Precision Classification:** Differentiates between Normal (GON-) and Glaucoma (GON+) scans.
+  * **Visual Explanations:** Generates heatmaps to show where the AI is "looking" (e.g., the optic disc).
+  * **Real-time Interface:** A Streamlit-based web app for instant diagnostic reporting.
 
 ## 📁 Repository Structure
+
 ```text
-├── app.py                # Streamlit Web Interface
-├── glaucoma.py           # Data Preprocessing & Model Training
-├── evaluate.py           # Performance Metrics (ROC, Confusion Matrix)
-├── Labels.csv            # Metadata & Clinical Labels
-└── results/              # Folder for model artifacts (h5) and plots
+├── 01_model_training.py     # Data Preprocessing & Model Training
+├── 02_model_evaluation.py   # Performance Metrics (ROC, Confusion Matrix)
+├── 03_glaucoma_dashboard.py # Streamlit Web Interface (Main App)
+├── Labels.csv               # Metadata & Clinical Labels
+├── Images/                  # Dataset (700+ Retinal Fundus Images)
+└── results/                 # Folder for model artifacts and plots
+    └── model_performance_summary.png  # Generated ROC & Confusion Matrix
 ```
 
 ## 🚀 How to Run
-### 1. Requirements
+
+### 1\. Requirements
+
 Ensure you have Python installed, then install the dependencies:
+
 ```bash
 pip install streamlit tensorflow opencv-python pillow pandas scikit-learn seaborn matplotlib
 ```
 
-### 2. Prepare Data
-* Place your raw images in an `Images/` folder in the root directory.
-* The `Labels.csv` should be in the root directory.
-* Run `python glaucoma.py` to preprocess images and train the model.
+### 2\. Execution Pipeline
 
-### 3. Launch the App
-```bash
-streamlit run app.py
-```
+To reproduce the results, run the scripts in this specific order:
+
+1.  **Train the Model:**
+
+    ```bash
+    python 01_model_training.py
+    ```
+
+    *This processes the `Images/` folder and saves the trained weights to the `results/` folder.*
+
+2.  **Generate Metrics:**
+
+    ```bash
+    python 02_model_evaluation.py
+    ```
+
+    *This creates the ROC Curve and Confusion Matrix based on the trained model.*
+
+3.  **Launch the App:**
+
+    ```bash
+    streamlit run 03_glaucoma_dashboard.py
+    ```
 
 ## 📈 Model Performance
-The model is evaluated based on its ability to minimize False Negatives (critical in medical diagnostics).
 
-* **Architecture:** MobileNetV2 (Transfer Learning)
-* **Input Size:** 224x224 RGB
-* **Metrics:** View the performance summary below:
+The model is evaluated based on its ability to minimize **False Negatives**, which is critical in a medical diagnostic context to ensure no cases of Glaucoma are missed.
+
+  * **Architecture:** MobileNetV2 (Transfer Learning)
+  * **Input Size:** 224x224 RGB
+  * **Metrics:** View the performance summary below:
 
 ![Model Results](results/model_performance_summary.png)
 
-
 ## 🧠 Explainable AI (Grad-CAM)
-We use Gradient-weighted Class Activation Mapping (Grad-CAM) to ensure clinical transparency. By visualizing the "Focus Map," doctors can verify if the AI is focusing on the optic nerve head rather than irrelevant background artifacts.
+
+We use **Gradient-weighted Class Activation Mapping (Grad-CAM)** to ensure clinical transparency. By visualizing the "Focus Map," doctors can verify if the AI is focusing on the optic nerve head rather than irrelevant background artifacts.
+
+-----
+
+### 💡 Note on Local Files
+
+To maintain repository efficiency, the following generated files are excluded from the GitHub upload but will be created on your machine upon running the scripts:
+
+  * `results/glaucoma_model.h5` (Trained Weights)
+  * `results/images_resized/` (Preprocessed data)
+
