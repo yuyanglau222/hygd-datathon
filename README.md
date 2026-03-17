@@ -10,11 +10,13 @@ Glaucoma is a leading cause of irreversible blindness. Early detection is critic
 
 ## 📁 Repository Structure
 ```text
-├── app.py                # Streamlit Web Interface
-├── glaucoma.py           # Data Preprocessing & Model Training
-├── evaluate.py           # Performance Metrics (ROC, Confusion Matrix)
-├── Labels.csv            # Metadata & Clinical Labels
-└── results/              # Folder for model artifacts (h5) and plots
+├── app.py                # Streamlit Web Interface (Main Entry Point)
+├── glaucoma.py           # Data Preprocessing & Model Training Script
+├── evaluate.py           # Detailed Model Evaluation (ROC & Confusion Matrix)
+├── Labels.csv            # Clinical Dataset Labels (Image Name vs Diagnosis)
+├── Images/               # Raw Fundus Images (700+ JPG/PNG files)
+└── results/              # Folder for model artifacts and outputs
+    └── model_performance_summary.png  # Generated ROC & Confusion Matrix Plot
 ```
 
 ## 🚀 How to Run
