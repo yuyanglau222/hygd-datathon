@@ -27,7 +27,7 @@ pip install streamlit tensorflow opencv-python pillow pandas scikit-learn seabor
 ```
 
 ### 2. Prepare Data
-* Place your raw images in an `Images/` folder in the root directory.
+* Place your `Images/` folder in the root directory.
 * The `Labels.csv` should be in the root directory.
 * Run `python glaucoma.py` to preprocess images and train the model.
 
