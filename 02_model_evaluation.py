@@ -8,16 +8,12 @@ import seaborn as sns
 from PIL import Image
 from sklearn.metrics import confusion_matrix, classification_report, roc_curve, auc
 
-# --- 1. SETUP PATHS ---
 base_dir = os.path.dirname(os.path.abspath(__file__))
 results_dir = os.path.join(base_dir, 'results')
-
 model_path = os.path.join(results_dir, "glaucoma_model.h5")
 test_csv = os.path.join(results_dir, "test_dataset.csv")
 resized_folder = os.path.join(results_dir, 'images_resized')
 
-# --- 2. LOAD MODEL & DATA ---
-print("Loading model and test data from results folder...")
 if not os.path.exists(model_path):
     print(f"❌ Error: Could not find {model_path}. Please run glaucoma.py first.")
     exit()
@@ -37,8 +33,7 @@ def load_test_arrays(df):
 
 X_test, y_test = load_test_arrays(test_df)
 
-# --- 3. METRICS GENERATION ---
-print("Generating predictions...")
+# Prediction: Generate probability scores and binary classes for the test set
 y_pred_prob = model.predict(X_test).flatten()
 y_pred = (y_pred_prob > 0.5).astype(int)
 
@@ -48,10 +43,9 @@ target_names = ['Normal (GON-)', 'Glaucoma (GON+)']
 print(classification_report(y_test, y_pred, target_names=target_names))
 print("="*40 + "\n")
 
-# --- 4. VISUALIZATION: ROC & CONFUSION MATRIX ---
+# Performance Visualization: Plotting ROC Curve and Confusion Matrix
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
 
-# Plot 1: ROC Curve
 fpr, tpr, _ = roc_curve(y_test, y_pred_prob)
 roc_auc = auc(fpr, tpr)
 ax1.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc:.4f})')
@@ -64,7 +58,6 @@ ax1.set_title('Receiver Operating Characteristic (ROC)')
 ax1.legend(loc="lower right")
 ax1.grid(alpha=0.3)
 
-# Plot 2: Confusion Matrix
 cm = confusion_matrix(y_test, y_pred)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax2,
             xticklabels=target_names, yticklabels=target_names)
@@ -73,12 +66,10 @@ ax2.set_ylabel('True Clinical Diagnosis')
 ax2.set_xlabel('Model Prediction')
 
 plt.tight_layout()
-# Save performance plot to results folder
 plt.savefig(os.path.join(results_dir, "model_performance_summary.png"))
-print(f"📊 Performance summary saved to: {results_dir}/model_performance_summary.png")
 plt.show()
 
-# --- 5. GRAD-CAM ALGORITHM ---
+# Grad-CAM Algorithm: Computes heatmap to visualize areas influencing the AI's decision
 def make_gradcam_heatmap(img_array, full_model, last_conv_layer_name='out_relu'):
     img_tensor = tf.convert_to_tensor(img_array, dtype=tf.float32)
     base_model = full_model.layers[0]
@@ -101,8 +92,7 @@ def make_gradcam_heatmap(img_array, full_model, last_conv_layer_name='out_relu')
     heatmap = tf.maximum(heatmap, 0) / tf.math.reduce_max(heatmap)
     return heatmap.numpy()
 
-# --- 6. DISPLAY GRAD-CAM EXAMPLE ---
-# Let's show a sample from the test set
+# Interpretability: Superimposing the Grad-CAM heatmap onto the original image
 sample_idx = 0
 sample_img = X_test[sample_idx:sample_idx+1]
 heatmap = make_gradcam_heatmap(sample_img, model)

@@ -5,14 +5,14 @@ import cv2
 import os
 from PIL import Image
 
-# --- 1. PAGE CONFIGURATION ---
+#PAGE CONFIGURATION
 st.set_page_config(
     page_title="Glaucoma AI Diagnostic Tool",
     page_icon="👁️",
     layout="centered"
 )
 
-# --- 2. SIDEBAR ---
+#SIDEBAR
 with st.sidebar:
     st.header("Technical Specifications")
     st.info("Analysis Engine: **MobileNetV2**")
@@ -21,22 +21,18 @@ with st.sidebar:
     st.markdown("---")
     st.caption("AI focus mapping uses Grad-CAM to visualize neural network attention.")
 
-# --- 3. TITLE ---
 st.title("👁️ Glaucoma Detection AI")
 st.write("Upload a retinal fundus image for precise probability analysis and feature mapping.")
 st.markdown("---")
 
-
-# --- 4. MODEL LOADING (Updated Path) ---
+#MODEL LOADING
 @st.cache_resource
 def load_glaucoma_model():
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    # Points to the new /results folder
     model_path = os.path.join(base_dir, "results", "glaucoma_model.h5")
     if not os.path.exists(model_path):
         return None
     return tf.keras.models.load_model(model_path)
-
 
 model = load_glaucoma_model()
 
@@ -44,8 +40,7 @@ if model is None:
     st.error("❌ **Error:** 'glaucoma_model.h5' not found in the /results folder. Please run glaucoma.py first.")
     st.stop()
 
-
-# --- 5. GRAD-CAM ALGORITHM ---
+#GRAD-CAM ALGORITHM
 def make_gradcam_heatmap(img_tensor, full_model, last_conv_layer_name='out_relu'):
     base_model = full_model.layers[0]
     conv_model = tf.keras.Model(
@@ -67,8 +62,7 @@ def make_gradcam_heatmap(img_tensor, full_model, last_conv_layer_name='out_relu'
     heatmap = tf.maximum(heatmap, 0) / tf.math.reduce_max(heatmap)
     return heatmap.numpy()
 
-
-# --- 6. INTERFACE: UPLOAD ---
+#INTERFACE: UPLOAD & INFERENCE
 uploaded_file = st.file_uploader("Upload Retinal Scan...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
@@ -78,7 +72,6 @@ if uploaded_file is not None:
     img_tensor = tf.convert_to_tensor(np.expand_dims(img_array, axis=0), dtype=tf.float32)
 
     with st.spinner('🔬 Running diagnostic inference...'):
-        # Get raw prediction
         prediction_raw = model.predict(img_tensor)[0][0]
         prediction = float(prediction_raw)
 
@@ -88,6 +81,7 @@ if uploaded_file is not None:
         st.image(image, use_container_width=True)
 
     with col2:
+        # VISUAL FEEDBACK
         st.markdown("**AI Focus Map**")
         heatmap = make_gradcam_heatmap(img_tensor, model)
         original_img_array = np.array(image).astype("float32")
@@ -102,10 +96,9 @@ if uploaded_file is not None:
 
     st.markdown("---")
 
-    # --- 7. DIAGNOSTIC RESULTS ---
+    #DIAGNOSTIC RESULTS
     st.subheader("📊 Diagnostic Summary")
 
-    # Logic for Certainty Status (Color text only)
     if prediction > 0.8 or prediction < 0.2:
         status_text, status_color = "Certain", "green"
     elif 0.4 <= prediction <= 0.6:
